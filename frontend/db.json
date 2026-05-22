@@ -10,7 +10,8 @@
       "tag": "고전문학",
       "coverImageUrl": "https://picsum.photos/seed/book1/200/300",
       "createdAt": "2026-05-01T10:00:00",
-      "updatedAt": "2026-05-22T07:21:34.212Z"
+      "updatedAt": "2026-05-22T07:21:34.212Z",
+      "deletedAt": ""
     },
     {
       "id": "2",
@@ -22,7 +23,8 @@
       "tag": "한국문학",
       "coverImageUrl": "https://picsum.photos/seed/book2/200/300",
       "createdAt": "2026-05-05T10:00:00",
-      "updatedAt": "2026-05-05T10:00:00"
+      "updatedAt": "2026-05-05T10:00:00",
+      "deletedAt": ""
     },
     {
       "id": "3",
@@ -34,7 +36,8 @@
       "tag": "역사/인문",
       "coverImageUrl": "https://picsum.photos/seed/book3/200/300",
       "createdAt": "2026-05-08T10:00:00",
-      "updatedAt": "2026-05-08T10:00:00"
+      "updatedAt": "2026-05-08T10:00:00",
+      "deletedAt": ""
     },
     {
       "id": "4",
@@ -46,7 +49,8 @@
       "tag": "고전/동화",
       "coverImageUrl": "https://picsum.photos/seed/book4/200/300",
       "createdAt": "2026-05-10T10:00:00",
-      "updatedAt": "2026-05-10T10:00:00"
+      "updatedAt": "2026-05-10T10:00:00",
+      "deletedAt": ""
     },
     {
       "id": "5",
@@ -58,7 +62,8 @@
       "tag": "개발/프로그래밍",
       "coverImageUrl": "https://picsum.photos/seed/book5/200/300",
       "createdAt": "2026-05-15T10:00:00",
-      "updatedAt": "2026-05-15T10:00:00"
+      "updatedAt": "2026-05-15T10:00:00",
+      "deletedAt": ""
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
