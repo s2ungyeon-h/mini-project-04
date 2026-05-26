@@ -6,11 +6,11 @@
       "author": "한강",
       "genre": "소설",
       "likes": 252,
-      "content": "채식을 선언한 영혜를 둘러싼 가족의 균열과 인간의 욕망, 폭력을 그린 소설",
+      "content": "평범한 여성이 어느 날 갑자기 채식을 선언하면서 벌어지는 가족 간의 갈등을 그린 소설",
       "tag": "한국문학",
       "coverImageUrl": "/src/img/book/채식주의자.jpg",
       "createdAt": "2026-05-05T10:00:00",
-      "updatedAt": "2026-05-05T10:00:00",
+      "updatedAt": "2026-05-26T05:20:29.891Z",
       "deletedAt": ""
     },
     {
@@ -23,7 +23,7 @@
       "tag": "역사/인문",
       "coverImageUrl": "/src/img/book/총균쇠.jpg",
       "createdAt": "2026-05-08T10:00:00",
-      "updatedAt": "2026-05-08T10:00:00",
+      "updatedAt": "2026-05-26T05:26:35.816Z",
       "deletedAt": ""
     },
     {
@@ -129,6 +129,70 @@
       "createdAt": "2026-05-22T07:39:51.583Z",
       "updatedAt": "2026-05-22T07:39:51.583Z",
       "deletedAt": ""
+    }
+  ],
+  "comments": [
+    {
+      "bookId": "3",
+      "author": "박유경",
+      "text": "어린 왕자의 순수한 시선이 사랑과 책임의 의미를 따뜻하게 전해 주는 좋은 책이에요.",
+      "createdAt": "2026-05-26T05:02:40.700Z",
+      "id": "OYwjoCac2hM"
+    },
+    {
+      "bookId": "3",
+      "author": "신가람",
+      "text": "짧은 이야기 안에 깊은 여운이 담겨 있어서 읽을 때마다 새롭게 다가옵니다.",
+      "createdAt": "2026-05-26T05:03:00.723Z",
+      "id": "jAFSXjf5Zv4"
+    },
+    {
+      "bookId": "2",
+      "author": "윤빈",
+      "text": "문명의 차이를 지리와 환경으로 풀어내는 관점이 넓고 설득력 있어서 유익했습니다.",
+      "password": "1111",
+      "createdAt": "2026-05-26T05:12:44.382Z",
+      "id": "sSAImVKMbkY"
+    },
+    {
+      "bookId": "5",
+      "author": "박선호",
+      "text": "싱클레어가 자신을 찾아가는 과정이 섬세하게 그려져 깊이 몰입해서 읽었습니다.",
+      "password": "111",
+      "createdAt": "2026-05-26T05:14:08.936Z",
+      "id": "4zYSMxB50Ps"
+    },
+    {
+      "bookId": "2",
+      "author": "한승연",
+      "text": "방대한 역사와 문명 이야기를 체계적으로 설명해 주어서 이해하기 좋았습니다.",
+      "password": "qq",
+      "createdAt": "2026-05-26T05:16:45.842Z",
+      "id": "_u24crg7PGw"
+    },
+    {
+      "bookId": "1",
+      "author": "심유리",
+      "text": "인물의 내면을 강렬하게 보여 주어서 오래 생각하게 만드는 인상적인 작품입니다.",
+      "password": "dd",
+      "createdAt": "2026-05-26T05:20:42.722Z",
+      "id": "7RiiNUjd-Fo"
+    },
+    {
+      "bookId": "4",
+      "author": "박형우",
+      "text": "좋은 코드의 기준을 구체적으로 알려 줘서 개발 습관을 돌아보게 하는 유익한 책입니다.",
+      "password": "dd",
+      "createdAt": "2026-05-26T05:20:42.722Z",
+      "id": "7RiiNUjd-Fo"
+    },
+    {
+      "bookId": "5",
+      "author": "김완수",
+      "text": "자기 자신을 찾아가는 여정을 깊이 있게 보여 줘서 여운이 오래 남는 작품입니다.",
+      "password": "dd",
+      "createdAt": "2026-05-26T05:20:42.722Z",
+      "id": "7RiiNUjd-Fo"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
