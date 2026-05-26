@@ -6,6 +6,66 @@ import Input from '../components/Input';
 
 const BOOKS_PER_PAGE = 4;
 
+function Sidebar({ books, selectedGenre, selectedTag, onGenreChange, onTagChange }) {
+  const genres = useMemo(() => {
+    const set = new Set(books.map((b) => b.genre).filter(Boolean));
+    return [...set].sort();
+  }, [books]);
+
+  const tags = useMemo(() => {
+    const set = new Set();
+    books.forEach((b) => {
+      if (b.tag) String(b.tag).split(',').forEach((t) => { const v = t.trim(); if (v) set.add(v); });
+    });
+    return [...set].sort();
+  }, [books]);
+
+  return (
+    <aside className="book-list-sidebar">
+      {/* 장르 필터 */}
+      <div className="sidebar-section">
+        <h3 className="sidebar-title">장르</h3>
+        <ul className="sidebar-list">
+          <li>
+            <button
+              className={`sidebar-item${!selectedGenre ? ' sidebar-item--active' : ''}`}
+              onClick={() => onGenreChange(null)}
+            >
+              전체
+            </button>
+          </li>
+          {genres.map((g) => (
+            <li key={g}>
+              <button
+                className={`sidebar-item${selectedGenre === g ? ' sidebar-item--active' : ''}`}
+                onClick={() => onGenreChange(selectedGenre === g ? null : g)}
+              >
+                {g}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* 태그 필터 */}
+      <div className="sidebar-section">
+        <h3 className="sidebar-title">태그</h3>
+        <div className="sidebar-tags">
+          {tags.map((t) => (
+            <button
+              key={t}
+              className={`sidebar-tag${selectedTag === t ? ' sidebar-tag--active' : ''}`}
+              onClick={() => onTagChange(selectedTag === t ? null : t)}
+            >
+              #{t}
+            </button>
+          ))}
+        </div>
+      </div>
+    </aside>
+  );
+}
+
 function Pagination({ currentPage, totalPages, onPageChange }) {
   if (totalPages <= 1) return null;
 
@@ -77,6 +137,8 @@ function BookList() {
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedGenre, setSelectedGenre] = useState(null);
+  const [selectedTag, setSelectedTag] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -121,12 +183,18 @@ function BookList() {
   };
 
   const filteredBooks = useMemo(() =>
-    books.filter(
-      (book) =>
+    books.filter((book) => {
+      const matchesSearch =
+        !searchTerm ||
         book.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.author?.toLowerCase().includes(searchTerm.toLowerCase())
-    ),
-    [books, searchTerm]
+        book.author?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesGenre = !selectedGenre || book.genre === selectedGenre;
+      const matchesTag =
+        !selectedTag ||
+        String(book.tag ?? '').split(',').map((t) => t.trim()).includes(selectedTag);
+      return matchesSearch && matchesGenre && matchesTag;
+    }),
+    [books, searchTerm, selectedGenre, selectedTag]
   );
 
   const totalPages = Math.ceil(filteredBooks.length / BOOKS_PER_PAGE);
@@ -136,11 +204,10 @@ function BookList() {
     return filteredBooks.slice(start, start + BOOKS_PER_PAGE);
   }, [filteredBooks, currentPage]);
 
-  // 검색어 바뀌면 1페이지로 리셋
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
-  };
+  // 필터 변경 시 1페이지로 리셋
+  const handleSearchChange = (e) => { setSearchTerm(e.target.value); setCurrentPage(1); };
+  const handleGenreChange = (g) => { setSelectedGenre(g); setCurrentPage(1); };
+  const handleTagChange = (t) => { setSelectedTag(t); setCurrentPage(1); };
 
   if (loading) {
     return (
@@ -170,72 +237,85 @@ function BookList() {
   }
 
   return (
-    <div className="book-list-container">
-      <h1 className="book-list-title">도서 목록 페이지</h1>
-
-      <div className="book-list-search-bar">
-        <Input
-          name="search"
-          placeholder="제목 또는 작가를 입력하세요..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className="book-list-search-input"
-        />
-        <Button
-          label="검색"
-          onClick={() => {}}
-          className="book-list-search-btn"
-        />
-      </div>
-
-      {/* 검색 결과 건수 */}
-      {searchTerm && (
-        <p className="book-list-result-info">
-          <strong>"{searchTerm}"</strong> 검색 결과 {filteredBooks.length}권
-        </p>
-      )}
-
-      <div className="book-list-grid">
-        {pagedBooks.map((book) => (
-          <div key={book.id} className="book-list-card">
-            <img
-              src={book.coverImageUrl || book.coverImage || noCover}
-              alt={`${book.title} 표지`}
-              className="book-list-cover"
-              onClick={() => navigate(`/books/${book.id}`)}
-              style={{ cursor: 'pointer' }}
-            />
-            <div className="book-list-info">
-              <h3 className="book-list-name">{book.title}</h3>
-              <p className="book-list-author">작가: {book.author}</p>
-              <p className="book-list-description">
-                <em>{book.summary || book.content || book.firstSentence || "등록된 소개글이 없습니다."}</em>
-              </p>
-              <Button
-                label={`👍 추천 (${book.likes || 0})`}
-                onClick={() => handleLike(book.id, book.likes || 0)}
-                className="book-list-like-btn"
-              />
-            </div>
-          </div>
-        ))}
-        {filteredBooks.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '60px 0', width: '100%', color: '#888' }}>
-            <p style={{ fontSize: '40px', marginBottom: '12px' }}>🔍</p>
-            <p style={{ fontSize: '16px' }}>
-              {searchTerm
-                ? `"${searchTerm}"에 해당하는 도서가 없습니다.`
-                : '등록된 도서가 없습니다.'}
-            </p>
-          </div>
-        )}
-      </div>
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
+    <div className="book-list-wrapper">
+      <Sidebar
+        books={books}
+        selectedGenre={selectedGenre}
+        selectedTag={selectedTag}
+        onGenreChange={handleGenreChange}
+        onTagChange={handleTagChange}
       />
+
+      <div className="book-list-container">
+        <h1 className="book-list-title">도서 목록 페이지</h1>
+
+        <div className="book-list-search-bar">
+          <Input
+            name="search"
+            placeholder="제목 또는 작가를 입력하세요..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="book-list-search-input"
+          />
+          <Button
+            label="검색"
+            onClick={() => {}}
+            className="book-list-search-btn"
+          />
+        </div>
+
+        {/* 활성 필터 / 결과 건수 */}
+        {(searchTerm || selectedGenre || selectedTag) && (
+          <p className="book-list-result-info">
+            {selectedGenre && <span className="book-list-filter-badge">{selectedGenre}</span>}
+            {selectedTag && <span className="book-list-filter-badge">#{selectedTag}</span>}
+            {searchTerm && <strong>"{searchTerm}"</strong>}
+            {' '}검색 결과 {filteredBooks.length}권
+          </p>
+        )}
+
+        <div className="book-list-grid">
+          {pagedBooks.map((book) => (
+            <div key={book.id} className="book-list-card">
+              <img
+                src={book.coverImageUrl || book.coverImage || noCover}
+                alt={`${book.title} 표지`}
+                className="book-list-cover"
+                onClick={() => navigate(`/books/${book.id}`)}
+                style={{ cursor: 'pointer' }}
+              />
+              <div className="book-list-info">
+                <h3 className="book-list-name">{book.title}</h3>
+                <p className="book-list-author">작가: {book.author}</p>
+                <p className="book-list-description">
+                  <em>{book.summary || book.content || book.firstSentence || '등록된 소개글이 없습니다.'}</em>
+                </p>
+                <Button
+                  label={`👍 추천 (${book.likes || 0})`}
+                  onClick={() => handleLike(book.id, book.likes || 0)}
+                  className="book-list-like-btn"
+                />
+              </div>
+            </div>
+          ))}
+          {filteredBooks.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '60px 0', width: '100%', color: '#888' }}>
+              <p style={{ fontSize: '40px', marginBottom: '12px' }}>🔍</p>
+              <p style={{ fontSize: '16px' }}>
+                {searchTerm || selectedGenre || selectedTag
+                  ? '조건에 맞는 도서가 없습니다.'
+                  : '등록된 도서가 없습니다.'}
+              </p>
+            </div>
+          )}
+        </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </div>
     </div>
   );
 }
