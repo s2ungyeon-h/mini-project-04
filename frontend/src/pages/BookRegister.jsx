@@ -34,7 +34,7 @@ function BookRegister() {
     );
   };
 
-  const handleSubmit = async () => {
+const handleSubmit = async () => {
     const newBook = {
       ...form,
       tag: selectedTags.join(","),
@@ -43,18 +43,25 @@ function BookRegister() {
       updatedAt: new Date().toISOString(),
     };
 
-    const res = await fetch("http://localhost:3000/books", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newBook),
-    });
+    try {
+      const res = await fetch("http://localhost:3000/books", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newBook),
+      });
 
-    if (res.ok) {
+      // 응답 상태 코드가 200번대가 아닌 경우 (예: 404, 500 등)
+      if (!res.ok) {
+        throw new Error("서버 응답 오류");
+      }
+
       alert("도서가 등록되었습니다!");
       setForm({ title: "", author: "", genre: "", likes: 0, content: "", tag: "", coverImageUrl: "" });
       setSelectedTags([]);
-    } else {
-      alert("등록 실패! json-server 실행 확인해주세요.");
+
+    } catch (error) {
+      console.error("도서 등록 중 에러 발생:", error);
+      alert("등록 실패! json-server 실행 확인 및 네트워크 상태를 확인해주세요.");
     }
   };
 

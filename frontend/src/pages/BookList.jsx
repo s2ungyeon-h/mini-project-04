@@ -1,43 +1,60 @@
-// import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../components/Button";
 import Input from "../components/Input";
 
-const initialBooks = [
-  {
-    id: 1,
-    title: "어린 왕자",
-    author: "앙투안 드 생텍쥐페리",
-    firstSentence: "다른 사람들에게는 결코 보여주지 않았던 나의 첫 번째 그림을 보여주었다.",
-    coverImage: "https://via.placeholder.com/120x160?text=The+Little+Prince",
-    likes: 15,
-  },
-  {
-    id: 2,
-    title: "데미안",
-    author: "헤르만 헤세",
-    firstSentence: "내 속에서 솟아 나오려는 것, 바로 그것을 나는 살아보려고 했다.",
-    coverImage: "https://via.placeholder.com/120x160?text=Demian",
-    likes: 24,
-  },
-];
-
 function BookList() {
-  const [books, setBooks] = useState(initialBooks);
+  const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // 추천(좋아요) 버튼 클릭 시 카운트 증가 함수
-  const handleLike = (id) => {
-    setBooks(
-      books.map((book) =>
-        book.id === id ? { ...book, likes: book.likes + 1 } : book
-      )
-    );
+  // 컴포넌트 로드 시 서버에서 데이터를 가져오는 로직 추가
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/books");
+        
+        if (!res.ok) {
+          throw new Error("서버 응답 오류");
+        }
+        
+        const data = await res.json();
+        setBooks(data);
+        
+      } catch (error) {
+        console.error("도서 목록 로딩 실패:", error);
+        alert("검색 결과를 불러오지 못했습니다.");
+      }
+    };
+
+    fetchBooks();
+  }, []);
+
+  // 추천 카운트 증가 함수 (서버 반영 버전)
+  const handleLike = async (id, currentLikes) => {
+    try {
+      const res = await fetch(`http://localhost:3000/books/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ likes: currentLikes + 1 }),
+      });
+
+      if (!res.ok) throw new Error("좋아요 반영 실패");
+
+      // 로컬 state 업데이트
+      setBooks(
+        books.map((book) =>
+          book.id === id ? { ...book, likes: book.likes + 1 } : book
+        )
+      );
+    } catch (error) {
+      console.error(error);
+      alert("처리에 실패했습니다.");
+    }
   };
 
   const filteredBooks = books.filter(
     (book) =>
-      book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchTerm.toLowerCase())
+      (book.title?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (book.author?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -63,7 +80,8 @@ function BookList() {
         {filteredBooks.map((book) => (
           <div key={book.id} style={styles.bookCard}>
             <img
-              src={book.coverImage}
+              // BookRegister에서 사용하는 coverImageUrl 필드와 하드코딩 필드 양쪽 모두 지원되도록 처리
+              src={book.coverImageUrl || book.coverImage || "https://via.placeholder.com/120x160?text=No+Image"}
               alt={`${book.title} 표지`}
               style={styles.coverImage}
             />
@@ -72,12 +90,13 @@ function BookList() {
               <h3 style={styles.bookTitle}>{book.title}</h3>
               <p style={styles.bookAuthor}>작가: {book.author}</p>
               <p style={styles.firstSentence}>
-                <em>"{book.firstSentence}"</em>
+                {/* BookRegister에서 사용하는 content 필드와 하드코딩 필드 양쪽 모두 지원되도록 처리 */}
+                <em>"{book.content || book.firstSentence || "등록된 소개글이 없습니다."}"</em>
               </p>
               
               <Button
-                label={`👍 추천 (${book.likes})`}
-                onClick={() => handleLike(book.id)}
+                label={`👍 추천 (${book.likes || 0})`}
+                onClick={() => handleLike(book.id, book.likes || 0)}
                 style={styles.likeButton}
               />
             </div>
