@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import './BookFinder.css'
 
 const ICON_PROPS = {
   width: 18,
