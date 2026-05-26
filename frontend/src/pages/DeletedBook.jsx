@@ -1,6 +1,6 @@
 /**
- * 도서 삭제(휴지통) 페이지
- * deletedAt이 존재하는 도서만 표시합니다.
+ * 도서 삭제 페이지
+ * deletedAt 필드에 삭제 날짜가 있는 도서만 표시합니다.
  */
 import { useCallback, useEffect, useState } from 'react';
 import DeletedBookCard from '../components/DeletedBookCard';
@@ -16,37 +16,28 @@ async function parseResponse(res, fallbackMessage) {
 }
 
 async function fetchDeletedBooks() {
-  const res = await fetch('http://localhost:3000/deletedBooks');
-  return parseResponse(res, '삭제된 도서 목록을 불러오지 못했습니다.');
-}
-
-async function fetchDeletedBook(id) {
-  const res = await fetch(`http://localhost:3000/deletedBooks/${id}`);
-  return parseResponse(res, '삭제된 도서를 찾을 수 없습니다.');
-}
-
-async function permanentDeleteBook(id) {
-  const res = await fetch(`http://localhost:3000/deletedBooks/${id}`, {
-    method: 'DELETE',
-  });
-  return parseResponse(res, '영구 삭제에 실패했습니다.');
+  const res = await fetch('http://localhost:3000/books');
+  const books = await parseResponse(res, '삭제된 도서 목록을 불러오지 못했습니다.');
+  return books.filter((book) => book.deletedAt);
 }
 
 async function restoreDeletedBook(id) {
-  const deleted = await fetchDeletedBook(id);
-  const { id: _id, deletedAt, ...bookWithoutMeta } = deleted;
-
-  const res = await fetch('http://localhost:3000/books', {
-    method: 'POST',
+  const res = await fetch(`http://localhost:3000/books/${id}`, {
+    method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      ...bookWithoutMeta,
+      deletedAt: '',
       updatedAt: new Date().toISOString(),
     }),
   });
-  const restored = await parseResponse(res, '도서 복원에 실패했습니다.');
-  await permanentDeleteBook(id);
-  return restored;
+  return parseResponse(res, '도서 복원에 실패했습니다.');
+}
+
+async function permanentDeleteBook(id) {
+  const res = await fetch(`http://localhost:3000/books/${id}`, {
+    method: 'DELETE',
+  });
+  return parseResponse(res, '영구 삭제에 실패했습니다.');
 }
 
 function DeletedBookPage() {
@@ -112,7 +103,7 @@ function DeletedBookPage() {
   if (loading) {
     return (
       <section className="app-content trash-page">
-        <p className="status-message">휴지통을 불러오는 중입니다…</p>
+        <p className="status-message">삭제 도서를 불러오는 중입니다...</p>
       </section>
     );
   }
@@ -122,7 +113,7 @@ function DeletedBookPage() {
       <div className="trash-header">
         <h1 className="page-title">삭제된 도서</h1>
         <p className="page-desc">
-          휴지통에 보관된 도서입니다. 복원하거나 영구 삭제할 수 있습니다.
+          삭제 날짜가 기록된 도서입니다. 복원하거나 영구 삭제할 수 있습니다.
         </p>
       </div>
 
@@ -140,7 +131,7 @@ function DeletedBookPage() {
           </span>
           <p className="empty-message">휴지통이 비어 있습니다.</p>
           <p className="page-desc">
-            도서 상세·목록에서 &quot;휴지통으로 이동&quot;한 도서가 여기에
+            도서 상세·목록에서 휴지통으로 이동한 도서가 여기에
             표시됩니다.
           </p>
         </div>
@@ -165,3 +156,5 @@ function DeletedBookPage() {
 }
 
 export default DeletedBookPage;
+
+
