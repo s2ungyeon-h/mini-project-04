@@ -3,9 +3,11 @@ import Header from './pages/Header';
 import BookList from './pages/BookList';
 import BookDetail from './pages/BookDetail';
 import BookRegister from './pages/BookRegister';
+import BookEdit from './pages/BookEdit';
 import Footer from './pages/Footer';
 import BookMain from './pages/BookMain';
 import DeletedBook from './pages/DeletedBook';
+import BookFinder from './pages/BookFinder';
 
 function App() {
   const [books, setBooks] = useState([]);
@@ -14,10 +16,11 @@ function App() {
   const [page, setPage] = useState(() => localStorage.getItem('page') ?? 'main');
   const [selectedBook, setSelectedBook] = useState(null);
   const [deletedRefreshKey, setDeletedRefreshKey] = useState(0);
+  const bookUrl = 'http://localhost:3000/books';
 
   // 책 목록 로드
   const loadBooks = async () => {
-    const res = await fetch('http://localhost:3000/books');
+    const res = await fetch(bookUrl);
     if (!res.ok) throw new Error('서버 연결 실패');
     const data = await res.json();
     setBooks(data.filter((book) => !book.deletedAt));
@@ -25,7 +28,7 @@ function App() {
 
   // 특정 책 1권 fetch
   const fetchBookById = async (id) => {
-    const res = await fetch(`http://localhost:3000/books/${id}`);
+    const res = await fetch(`${bookUrl}/${id}`);
     if (!res.ok) throw new Error('책 정보를 불러오지 못했습니다.');
     return res.json();
   };
@@ -80,6 +83,38 @@ function App() {
     loadBooks().catch(console.error);
   };
 
+  // 메인 페이지 이동
+  const handleGoToMain = () => {
+    goToPage('main');
+  };
+
+  // 도서 검색 페이지 이동
+  const handleGoToFinder = () => {
+    goToPage('finder');
+  };
+
+  // 수정 페이지 이동
+  const handleGoToEdit = () => {
+    goToPage('edit', selectedBook);
+  };
+
+  // 커버 이미지 업데이트
+  const handleCoverUpdate = async (bookId, imageSrc) => {
+    try {
+      const res = await fetch(`${bookUrl}/${bookId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ coverImageUrl: imageSrc }),
+      });
+      const data = await res.json();
+      setSelectedBook(data);
+      setBooks((prev) => prev.map((b) => (b.id === data.id ? data : b)));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 삭제 도서 페이지 이동
   const handleGoToDeleted = () => {
     goToPage('deleted');
     setDeletedRefreshKey((prev) => prev + 1);
@@ -89,7 +124,7 @@ function App() {
     const ok = window.confirm(`"${book.title}"을(를) 삭제 도서로 이동할까요?`);
     if (!ok) return;
     try {
-      const res = await fetch(`http://localhost:3000/books/${book.id}`, {
+      const res = await fetch(`${bookUrl}/${book.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -110,7 +145,7 @@ function App() {
 
   const handleUpdate = async (updatedBook) => {
     try {
-      const res = await fetch(`http://localhost:3000/books/${updatedBook.id}`, {
+      const res = await fetch(`${bookUrl}/${updatedBook.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -134,28 +169,34 @@ function App() {
 
   if (loading) return (
     <>
-      <Header onGoToList={handleGoToList} onGoToDeleted={handleGoToDeleted} onGoToMain={() => goToPage('main')} />
+      <Header onGoToList={handleGoToList} onGoToDeleted={handleGoToDeleted} onGoToMain={handleGoToMain} />
       <p style={{ textAlign: 'center', marginTop: '60px', color: '#888' }}>도서 정보를 불러오는 중...</p>
     </>
   );
 
   if (error) return (
     <>
-      <Header onGoToList={handleGoToList} onGoToDeleted={handleGoToDeleted} onGoToMain={() => goToPage('main')} />
+      <Header onGoToList={handleGoToList} onGoToDeleted={handleGoToDeleted} onGoToMain={handleGoToMain} />
       <p style={{ textAlign: 'center', marginTop: '60px', color: '#c53030' }}>에러 발생: {error}</p>
     </>
   );
 
   return (
     <>
-      <Header onGoToList={handleGoToList} onGoToDeleted={handleGoToDeleted} onGoToMain={() => goToPage('main')} />
+      <Header onGoToList={handleGoToList} onGoToDeleted={handleGoToDeleted} onGoToMain={handleGoToMain} />
       <main>
         {page === 'detail' ? (
           selectedBook
-            ? <BookDetail book={selectedBook} onDelete={() => handleDelete(selectedBook)} onUpdate={handleUpdate} />
+            ? <BookDetail book={selectedBook} onDelete={() => handleDelete(selectedBook)} onUpdate={handleUpdate} onEdit={handleGoToEdit} />
             : <p style={{ textAlign: 'center', marginTop: '60px', color: '#888' }}>도서 정보를 찾을 수 없습니다.</p>
         ) : page === 'main' ? (
           <BookMain onGoToList={handleGoToList} onGoToRegister={() => goToPage('register')} onGoToDeleted={handleGoToDeleted} onSelectBook={handleSelectBook} />
+        ) : page === 'finder' ? (
+          <BookFinder />
+        ) : page === 'edit' ? (
+          selectedBook
+            ? <BookEdit book={selectedBook} onCoverUpdate={handleCoverUpdate} />
+            : <p style={{ textAlign: 'center', marginTop: '60px', color: '#888' }}>도서 정보를 찾을 수 없습니다.</p>
         ) : page === 'register' ? (
           <BookRegister onBack={handleGoToList} />
         ) : page === 'deleted' ? (

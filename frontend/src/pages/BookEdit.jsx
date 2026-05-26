@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { generateBookCover } from '../components/api/openai'
+import { generateBookCover } from '../components/api/Openapi'
 
 const JSON_SERVER_URL = 'http://localhost:3000'
 
-function BookEdit({ book, onCoverUpdate }) {
+function BookEdit({ book, onCoverUpdate, onBack, onSave }) {
   // 도서 수정 필드 상태
   const [title, setTitle] = useState(book.title)
   const [author, setAuthor] = useState(book.author)
@@ -29,11 +29,14 @@ function BookEdit({ book, onCoverUpdate }) {
           author,
           content,
           tag,
-          updatedAt: new Date().toISOString(), // 수정 시간 갱신
+          coverImageUrl: coverPreview,
+          updatedAt: new Date().toISOString(),
         }),
       })
       if (!res.ok) throw new Error('저장 실패')
-      alert('저장되었습니다!')
+      const data = await res.json()
+      onSave(data)
+      onBack()
     } catch (err) {
       alert(`저장 오류: ${err.message}`)
     } finally {
@@ -54,8 +57,7 @@ function BookEdit({ book, onCoverUpdate }) {
       const editedBook = { title, author, content, tag, genre: book.genre }
       const imageSrc = await generateBookCover(editedBook, apiKey, quality)
       setCoverPreview(imageSrc)
-      await onCoverUpdate(book.id, imageSrc)
-      alert(`"${title}" 표지가 생성되었습니다!`)
+      alert(`"${title}" 표지가 생성되었습니다! 저장 버튼을 눌러 저장하세요.`)
     } catch (err) {
       if (err.message === '401')          alert('API Key가 올바르지 않습니다.')
       else if (err.message === '429')     alert('요청 한도 초과. 잠시 후 다시 시도해주세요.')
@@ -68,6 +70,7 @@ function BookEdit({ book, onCoverUpdate }) {
 
   return (
     <div className="book-edit">
+      <button onClick={onBack}>← 뒤로 가기</button>
       <h2>📝 도서 수정</h2>
 
       <div className="edit-layout">
