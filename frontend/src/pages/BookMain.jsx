@@ -27,6 +27,10 @@ function BookMain() {
   );
 }
 
+/* ============================================================
+   왼쪽 검색
+   ============================================================ */
+
 function BookSearch() {
   const navigate = useNavigate();
 
@@ -372,6 +376,41 @@ function BookSearch() {
 }
 
 /* ============================================================
+   왼쪽 메뉴
+   ============================================================ */
+
+function BookMenu() {
+  const navigate = useNavigate();
+
+  const MENU_LIST = [
+    { icon: "0️⃣", name: "새도서등록", path: '/books/register' },
+    { icon: "1️⃣", name: "도서검색", path: "/books/search" },
+    { icon: "2️⃣", name: "도서목록", path: '/books' },
+    { icon: "3️⃣", name: "사용자통계", path: 'books/chart' },
+    { icon: "4️⃣", name: "휴지통", path: '/books/deleted' },
+  ];
+
+  return (
+    <div className="book-menu">
+      {MENU_LIST.map((menu, index) => (
+        <button
+          key={index}
+          className="book-menu-item"
+          onClick={() => navigate(menu.path)}
+        >
+          <div className="book-menu-icon">
+            {menu.icon}
+          </div>
+          <span className="book-menu-name">
+            {menu.name}
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
    인기 도서
    ============================================================ */
 
@@ -519,37 +558,6 @@ function BookSection() {
           <button className="likes-book-btn right" onClick={moveNext}>›</button>
         </div>
       </section>
-    </div>
-  );
-}
-
-function BookMenu() {
-  const navigate = useNavigate();
-
-  const MENU_LIST = [
-    { icon: "0️⃣", name: "새도서등록", path: '/books/register' },
-    { icon: "1️⃣", name: "도서검색", path: "/books/search" },
-    { icon: "2️⃣", name: "도서목록", path: '/books' },
-    { icon: "3️⃣", name: "사용자통계", path: 'books/chart' },
-    { icon: "4️⃣", name: "휴지통", path: '/books/deleted' },
-  ];
-
-  return (
-    <div className="book-menu">
-      {MENU_LIST.map((menu, index) => (
-        <button
-          key={index}
-          className="book-menu-item"
-          onClick={() => navigate(menu.path)}
-        >
-          <div className="book-menu-icon">
-            {menu.icon}
-          </div>
-          <span className="book-menu-name">
-            {menu.name}
-          </span>
-        </button>
-      ))}
     </div>
   );
 }
