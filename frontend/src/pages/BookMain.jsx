@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import noCover from '../img/no-cover.svg';
 import {
@@ -59,6 +59,7 @@ function BookSection() {
   const [popularBooks, setPopularBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -69,7 +70,8 @@ function BookSection() {
         const data = await res.json();
         const sorted = data
           .filter((book) => !book.deletedAt)
-          .sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
+          .sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0))
+          .slice(0, 10);
         setPopularBooks(sorted);
       } catch (err) {
         console.error('도서 목록 불러오기 실패:', err);
@@ -81,22 +83,48 @@ function BookSection() {
     load();
   }, []);
 
-  const movePrev = (books, startIndex, setStartIndex) => {
-    setStartIndex(
-      startIndex === 0 ? books.length - visibleCount : startIndex - 1
-    );
+  const trackRef = useRef(null);
+  const moveNextRef = useRef(null);
+
+  const disableTransition = () => {
+    if (trackRef.current) trackRef.current.style.transition = 'none';
+  };
+  const enableTransition = () => {
+    if (trackRef.current) trackRef.current.style.transition = '';
   };
 
-  const moveNext = (books, startIndex, setStartIndex) => {
-    setStartIndex(
-      startIndex >= books.length - visibleCount ? 0 : startIndex + 1
-    );
+  const moveNext = () => {
+    const isLast = popularIndex >= popularBooks.length - visibleCount;
+    if (isLast) {
+      disableTransition();
+      setPopularIndex(0);
+      requestAnimationFrame(() => requestAnimationFrame(enableTransition));
+    } else {
+      setPopularIndex((prev) => prev + 1);
+    }
   };
 
-  const popularVisibleBooks = popularBooks.slice(
-    popularIndex,
-    popularIndex + visibleCount
-  );
+  const movePrev = () => {
+    if (popularIndex === 0) {
+      disableTransition();
+      setPopularIndex(popularBooks.length - visibleCount);
+      requestAnimationFrame(() => requestAnimationFrame(enableTransition));
+    } else {
+      setPopularIndex((prev) => prev - 1);
+    }
+  };
+
+  // moveNext 최신 버전을 ref에 저장 (stale closure 방지)
+  useEffect(() => {
+    moveNextRef.current = moveNext;
+  });
+
+  // 3초마다 자동 슬라이드, 호버 중엔 멈춤
+  useEffect(() => {
+    if (isPaused || popularBooks.length <= visibleCount) return;
+    const timer = setInterval(() => moveNextRef.current?.(), 3000);
+    return () => clearInterval(timer);
+  }, [isPaused, popularBooks.length]);
 
   if (loading) {
     return (
@@ -138,39 +166,41 @@ function BookSection() {
           <h2>인기 도서</h2>
         </div>
 
-        <div className="likes-book-slider">
-          <div className="likes-book-list">
-            {popularVisibleBooks.map((book, index) => (
-              <div className="likes-book-card" key={`${book.title}-${index}`}>
-                <div
-                  className="likes-book-thumbnail"
-                  onClick={() => navigate(`/books/${book.id}`)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <img
-                    src={book.coverImageUrl || noCover}
-                    alt={book.title}
-                    className="likes-book-cover"
-                  />
+        <div
+          className="likes-book-slider"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <div className="likes-book-track-wrap">
+            <div
+              ref={trackRef}
+              className="likes-book-track"
+              style={{
+                transform: `translateX(calc(-${popularIndex} * 100% / ${popularBooks.length}))`,
+              }}
+            >
+              {popularBooks.map((book, index) => (
+                <div className="likes-book-card" key={book.id || index}>
+                  <div
+                    className="likes-book-thumbnail"
+                    onClick={() => navigate(`/books/${book.id}`)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <img
+                      src={book.coverImageUrl || noCover}
+                      alt={book.title}
+                      className="likes-book-cover"
+                    />
+                  </div>
+                  <h3>{book.title}</h3>
+                  <p className="likes-book-author">{book.author}</p>
                 </div>
-                <h3>{book.title}</h3>
-                <p className="likes-book-author">{book.author}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          <button
-            className="likes-book-btn left"
-            onClick={() => movePrev(popularBooks, popularIndex, setPopularIndex)}
-          >
-            ‹
-          </button>
-          <button
-            className="likes-book-btn right"
-            onClick={() => moveNext(popularBooks, popularIndex, setPopularIndex)}
-          >
-            ›
-          </button>
+          <button className="likes-book-btn left" onClick={movePrev}>‹</button>
+          <button className="likes-book-btn right" onClick={moveNext}>›</button>
         </div>
       </section>
     </div>
