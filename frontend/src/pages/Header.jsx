@@ -34,6 +34,18 @@ function Header() {
           ))}
         </nav>
 
+        <div className="header-icons">
+          <button className="icon-link-btn" onClick={() => navigate('/books')}>
+            <img src="src/icon01.png" alt="도서 목록" />
+          </button>
+          <button className="icon-link-btn" onClick={() => navigate('/books/register')}>
+            <img src="src/icon02.png" alt="도서 등록" />
+          </button>
+          <button className="icon-link-btn" onClick={() => navigate('/books/deleted')}>
+            <img src="src/icon03.png" alt="휴지통" />
+          </button>
+        </div>
+
       </div>
     </header>
   );
