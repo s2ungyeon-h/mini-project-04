@@ -14,32 +14,31 @@ AI 표지 생성을 지원하는 도서관리 시스템 "걷기가 서재"입니
 
 - 도서 메인페이지 UI
 
-<img width="1280" height="699" alt="Image" src="https://github.com/user-attachments/assets/fa9760c7-5aec-4597-a6ea-d769c1bfc2bf" />
+<img width="640" height="349" alt="Image" src="https://github.com/user-attachments/assets/4f1f84a4-3ab2-4571-9b84-30f1f856b754" />
 
 - 도서 등록페이지 UI
 
-<img width="1280" height="699" alt="Image" src="https://github.com/user-attachments/assets/bb992098-8d32-4d9f-8584-0587b61859ba" />
+<img width="640" height="348" alt="Image" src="https://github.com/user-attachments/assets/6b9b5995-6993-4770-9e4b-d5f41694b37f" />
 
 - 도서 목록페이지 UI
 
-<img width="1280" height="699" alt="Image" src="https://github.com/user-attachments/assets/a7f2122c-0772-4221-a97b-55c97388b94f" />
+<img width="640" height="349" alt="Image" src="https://github.com/user-attachments/assets/e2cf5065-a57a-42c5-b99c-ef65f72ca5b4" />
 
 - 도서 수정페이지 UI
 
-<img width="1268" height="668" alt="Image" src="https://github.com/user-attachments/assets/14ce77f1-c4f3-449c-b7a0-098b07e529d4" />
+<img width="640" height="334" alt="Image" src="https://github.com/user-attachments/assets/14ce77f1-c4f3-449c-b7a0-098b07e529d4" />
 
 - 도서 삭제 페이지 UI
 
-<img width="1280" height="704" alt="Image" src="https://github.com/user-attachments/assets/4d0b9076-9a6c-4bef-93b8-8f8d78c8cfb6" />
+<img width="640" height="362" alt="Image" src="https://github.com/user-attachments/assets/4d0b9076-9a6c-4bef-93b8-8f8d78c8cfb6" />
 
 - 도서 통계 페이지 UI
 
-<img width="1280" height="650" alt="Image" src="https://github.com/user-attachments/assets/a14b9a29-ab4e-480e-9562-83e1dfdd01b0" />
+<img width="640" height="313" alt="Image" src="https://github.com/user-attachments/assets/1501908b-4357-4df4-b23e-c50df0bcdf4d" />
 
 - 휴지통 UI
 
-<img width="1280" height="673" alt="Image" src="https://github.com/user-attachments/assets/4425554b-b3b7-41b9-8367-b472aef09257" />
-
+<img width="640" height="338" alt="Image" src="https://github.com/user-attachments/assets/3d6c192d-c34f-4fb0-821a-5b675119be30" />
 
 
 
