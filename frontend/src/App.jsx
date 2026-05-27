@@ -7,6 +7,7 @@ import BookDetail from './pages/BookDetail';
 import BookEdit from './pages/BookEdit';
 import BookRegister from './pages/BookRegister';
 import DeletedBook from './pages/DeletedBook';
+import BookChart from './pages/BookChart';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/books/deleted"  element={<DeletedBook />} />
           <Route path="/books/:id"      element={<BookDetail />} />
           <Route path="/books/:id/edit" element={<BookEdit />} />
+          <Route path="/books/chart"    element={<BookChart />} />
         </Routes>
       </main>
       <Footer />
