@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import noCover from '../img/no-cover.svg';
 
@@ -455,20 +455,6 @@ function BookSection() {
     return () => clearInterval(timer);
   }, [isPaused, popularBooks.length]);
 
-    setPopularIndex(
-      popularIndex >=
-      popularBooks.length - visibleCount
-        ? 0
-        : popularIndex + 1
-    );
-  };
-
-  const popularVisibleBooks =
-    popularBooks.slice(
-      popularIndex,
-      popularIndex + visibleCount
-    );
-
   if (
     loading ||
     error ||
@@ -526,14 +512,6 @@ function BookSection() {
     </div>
   );
 }
-
-/* ============================================================
-   기존 통계 유지
-   ============================================================ */
-
-/* ============================================================
-   기존 통계 유지
-   ============================================================ */
 
 function StatisticsSection() {
   const [bookCountType, setBookCountType] = useState('genre');
