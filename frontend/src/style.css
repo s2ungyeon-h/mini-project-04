@@ -611,8 +611,6 @@ button {
 
 .book-menu-item:hover {
   transform: translateY(-4px);
-  background: #1b3a5c;
-  color: white;
   box-shadow: 0 8px 20px rgba(27, 58, 92, 0.2);
 }
 
@@ -634,14 +632,12 @@ button {
 .book-menu-name {
   font-size: 18px;
   font-weight: 530;
-
   color: #1f2937;
-
   transition: 0.2s;
 }
 
 .book-menu-item:hover .book-menu-name {
-  color: white;
+  color: #1f2937;
 }
 
 /* ============================================================
