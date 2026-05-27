@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import noCover from '../img/no-cover.svg';
-
-const GENRE_LIST = ['소설', '고전', '역사', 'IT', '동화', '자기계발', '과학', '경제', '철학', '예술'];
-const TAG_LIST = ['한국문학', '고전문학', '개발/프로그래밍', '역사/인문', '고전/동화', '베스트셀러', '추천도서', '과학/기술'];
+import { GENRE_LIST, TAG_LIST } from "../bookOption";
 
 function BookDetail() {
   const { id } = useParams();
@@ -206,11 +204,7 @@ function BookDetail() {
         {/* 상단 버튼 */}
         <div style={styles.buttonRow}>
           {!isEditMode ? (
-            <button style={styles.editBtn} onClick={() => {
-              if (window.confirm('도서 수정 이미지 생성 시 비용이 발생할 수 있습니다. 계속하시겠습니까?')) {
-                navigate(`/books/${id}/edit`);
-              }
-            }}>수정</button>
+            <button style={styles.editBtn} onClick={() => navigate(`/books/${id}/edit`)}>수정</button>
           ) : (
             <button style={styles.saveBtn} onClick={handleSubmitUpdate}>✅ 수정 완료</button>
           )}
