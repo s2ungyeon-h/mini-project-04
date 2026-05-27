@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import noCover from '../img/no-cover.svg';
 import { GENRE_LIST, TAG_LIST } from "../bookOption";
@@ -17,6 +17,22 @@ import {
 } from 'recharts';
 
 function BookMain() {
+  return (
+    <>
+      <div className='book-main-section'>
+        <BookSearch />
+        <BookMenu />
+      </div>
+      <BookSection />
+    </>
+  );
+}
+
+/* ============================================================
+   왼쪽 검색
+   ============================================================ */
+
+function BookSearch() {
   const navigate = useNavigate();
 
   // 검색 상태
@@ -186,7 +202,7 @@ function BookMain() {
                     ))
                 )}
               </div>
-          )}
+            )}
         </div>
 
         <button className="icon-btn">
@@ -267,75 +283,108 @@ function BookMain() {
       {(selectedGenres.length > 0 ||
         selectedTags.length > 0) && (
 
-        <section className="detail-result-section">
+          <section className="detail-result-section">
 
-          <div className="detail-result-header">
+            <div className="detail-result-header">
 
-            <h3>
-              검색 결과
-            </h3>
+              <h3>
+                검색 결과
+              </h3>
 
-            <p>
-              총 {filteredBooks.length}권
-            </p>
-          </div>
-
-          {filteredBooks.length === 0 ? (
-
-            <div className="detail-empty">
-              조건에 맞는 도서가 없습니다.
+              <p>
+                총 {filteredBooks.length}권
+              </p>
             </div>
 
-          ) : (
+            {filteredBooks.length === 0 ? (
 
-            <div className="detail-book-grid">
+              <div className="detail-empty">
+                조건에 맞는 도서가 없습니다.
+              </div>
 
-              {filteredBooks.map((book) => (
+            ) : (
 
-                <div
-                  key={book.id}
-                  className="detail-book-card"
-                  onClick={() =>
-                    navigate(`/books/${book.id}`)
-                  }
-                >
+              <div className="detail-book-grid">
 
-                  <div className="detail-book-image">
+                {filteredBooks.map((book) => (
 
-                    <img
-                      src={
-                        book.coverImageUrl?.trim()
-                          ? book.coverImageUrl
-                          : noCover
-                      }
-                      alt={book.title}
-                      onError={(e) => {
-                        e.target.src = noCover;
-                      }}
-                    />
+                  <div
+                    key={book.id}
+                    className="detail-book-card"
+                    onClick={() =>
+                      navigate(`/books/${book.id}`)
+                    }
+                  >
+
+                    <div className="detail-book-image">
+
+                      <img
+                        src={
+                          book.coverImageUrl?.trim()
+                            ? book.coverImageUrl
+                            : noCover
+                        }
+                        alt={book.title}
+                        onError={(e) => {
+                          e.target.src = noCover;
+                        }}
+                      />
+                    </div>
+
+                    <div className="detail-book-info">
+
+                      <h4>{book.title}</h4>
+
+                      <p>{book.author}</p>
+
+                      <span>
+                        {book.genre}
+                      </span>
+
+                    </div>
                   </div>
+                ))}
+              </div>
+            )}
 
-                  <div className="detail-book-info">
-
-                    <h4>{book.title}</h4>
-
-                    <p>{book.author}</p>
-
-                    <span>
-                      {book.genre}
-                    </span>
-
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
-
-      <BookSection />
-      <StatisticsSection />
+          </section>
+        )}
     </>
+  );
+}
+
+/* ============================================================
+   왼쪽 메뉴
+   ============================================================ */
+
+function BookMenu() {
+  const navigate = useNavigate();
+
+  const MENU_LIST = [
+    { icon: "0️⃣", name: "새도서등록", path: '/books/register' },
+    { icon: "1️⃣", name: "도서검색", path: "/books/search" },
+    { icon: "2️⃣", name: "도서목록", path: '/books' },
+    { icon: "3️⃣", name: "사용자통계", path: 'books/chart' },
+    { icon: "4️⃣", name: "휴지통", path: '/books/deleted' },
+  ];
+
+  return (
+    <div className="book-menu">
+      {MENU_LIST.map((menu, index) => (
+        <button
+          key={index}
+          className="book-menu-item"
+          onClick={() => navigate(menu.path)}
+        >
+          <div className="book-menu-icon">
+            {menu.icon}
+          </div>
+          <span className="book-menu-name">
+            {menu.name}
+          </span>
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -351,6 +400,7 @@ function BookSection() {
   const [popularBooks, setPopularBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -367,12 +417,8 @@ function BookSection() {
 
         const sorted = data
           .filter((book) => !book.deletedAt)
-          .sort((a, b) => (
-            Number(b.likes) || 0
-          ) - (
-            Number(a.likes) || 0
-          ));
-
+          .sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0))
+          .slice(0, 10);
         setPopularBooks(sorted);
 
       } catch (err) {
@@ -393,36 +439,48 @@ function BookSection() {
     load();
   }, []);
 
-  const movePrev = () => {
-    if (popularBooks.length <= visibleCount) {
-      return;
-    }
+  const trackRef = useRef(null);
+  const moveNextRef = useRef(null);
 
-    setPopularIndex(
-      popularIndex === 0
-        ? popularBooks.length - visibleCount
-        : popularIndex - 1
-    );
+  const disableTransition = () => {
+    if (trackRef.current) trackRef.current.style.transition = 'none';
+  };
+  const enableTransition = () => {
+    if (trackRef.current) trackRef.current.style.transition = '';
   };
 
   const moveNext = () => {
-    if (popularBooks.length <= visibleCount) {
-      return;
+    const isLast = popularIndex >= popularBooks.length - visibleCount;
+    if (isLast) {
+      disableTransition();
+      setPopularIndex(0);
+      requestAnimationFrame(() => requestAnimationFrame(enableTransition));
+    } else {
+      setPopularIndex((prev) => prev + 1);
     }
-
-    setPopularIndex(
-      popularIndex >=
-      popularBooks.length - visibleCount
-        ? 0
-        : popularIndex + 1
-    );
   };
 
-  const popularVisibleBooks =
-    popularBooks.slice(
-      popularIndex,
-      popularIndex + visibleCount
-    );
+  const movePrev = () => {
+    if (popularIndex === 0) {
+      disableTransition();
+      setPopularIndex(popularBooks.length - visibleCount);
+      requestAnimationFrame(() => requestAnimationFrame(enableTransition));
+    } else {
+      setPopularIndex((prev) => prev - 1);
+    }
+  };
+
+  // moveNext 최신 버전을 ref에 저장 (stale closure 방지)
+  useEffect(() => {
+    moveNextRef.current = moveNext;
+  });
+
+  // 3초마다 자동 슬라이드, 호버 중엔 멈춤
+  useEffect(() => {
+    if (isPaused || popularBooks.length <= visibleCount) return;
+    const timer = setInterval(() => moveNextRef.current?.(), 3000);
+    return () => clearInterval(timer);
+  }, [isPaused, popularBooks.length]);
 
   if (
     loading ||
@@ -441,490 +499,44 @@ function BookSection() {
           <h2>인기 도서</h2>
         </div>
 
-        <div className="likes-book-slider">
-
-          <div className="likes-book-list">
-
-            {popularVisibleBooks.map(
-              (book, index) => (
-
-                <div
-                  className="likes-book-card"
-                  key={`${book.id}-${index}`}
-                >
+        <div
+          className="likes-book-slider"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <div className="likes-book-track-wrap">
+            <div
+              ref={trackRef}
+              className="likes-book-track"
+              style={{
+                transform: `translateX(calc(-${popularIndex} * 100% / ${popularBooks.length}))`,
+              }}
+            >
+              {popularBooks.map((book, index) => (
+                <div className="likes-book-card" key={book.id || index}>
                   <div
                     className="likes-book-thumbnail"
-                    onClick={() =>
-                      navigate(`/books/${book.id}`)
-                    }
-                    style={{
-                      cursor: 'pointer'
-                    }}
+                    onClick={() => navigate(`/books/${book.id}`)}
+                    style={{ cursor: 'pointer' }}
                   >
                     <img
-                      src={
-                        book.coverImageUrl?.trim()
-                          ? book.coverImageUrl
-                          : noCover
-                      }
+                      src={book.coverImageUrl || noCover}
                       alt={book.title}
                       className="likes-book-cover"
-                      onError={(e) => {
-                        e.target.src = noCover;
-                      }}
                     />
                   </div>
-
                   <h3>{book.title}</h3>
-
-                  <p className="likes-book-author">
-                    {book.author}
-                  </p>
+                  <p className="likes-book-author">{book.author}</p>
                 </div>
-              )
-            )}
+              ))}
+            </div>
           </div>
 
-          {popularBooks.length > visibleCount && (
-            <>
-              <button
-                className="likes-book-btn left"
-                onClick={movePrev}
-              >
-                ‹
-              </button>
-
-              <button
-                className="likes-book-btn right"
-                onClick={moveNext}
-              >
-                ›
-              </button>
-            </>
-          )}
+          <button className="likes-book-btn left" onClick={movePrev}>‹</button>
+          <button className="likes-book-btn right" onClick={moveNext}>›</button>
         </div>
       </section>
     </div>
-  );
-}
-
-/* ============================================================
-   기존 통계 유지
-   ============================================================ */
-
-function StatisticsSection() {
-  const [bookCountType, setBookCountType] = useState('genre');
-  const [likeCountType, setLikeCountType] = useState('genre');
-  const [bookChartType, setBookChartType] = useState('pie');
-  const [likeChartType, setLikeChartType] = useState('pie');
-
-  const [books, setBooks] = useState([]);
-
-  const [statsLoading, setStatsLoading] = useState(true);
-  const [statsError, setStatsError] = useState(null);
-
-  useEffect(() => {
-    fetch('http://localhost:3000/books')
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('서버 연결 실패');
-        }
-
-        return res.json();
-      })
-      .then((data) => {
-
-        setBooks(
-          data.filter((book) => !book.deletedAt)
-        );
-
-        setStatsLoading(false);
-      })
-      .catch((err) => {
-
-        console.error(
-          '통계 데이터 불러오기 실패:',
-          err
-        );
-
-        setStatsError(
-          '통계 데이터를 불러오지 못했습니다.'
-        );
-
-        setStatsLoading(false);
-      });
-  }, []);
-
-  const colors = [
-    '#3ba4f6',
-    '#6b4fd6',
-    '#a78bfa',
-    '#2f5673',
-    '#f5a623'
-  ];
-
-  const getTags = (tag) => {
-
-    if (Array.isArray(tag)) {
-      return tag;
-    }
-
-    if (
-      typeof tag === 'string' &&
-      tag.trim()
-    ) {
-      return tag.split(',');
-    }
-
-    return [];
-  };
-
-  const getBookCountByGenre = () => {
-
-    const result = {};
-
-    books.forEach((book) => {
-
-      result[book.genre] =
-        (result[book.genre] || 0) + 1;
-    });
-
-    return Object.entries(result).map(
-      ([name, value]) => ({
-        name,
-        value
-      })
-    );
-  };
-
-  const getBookCountByTag = () => {
-
-    const result = {};
-
-    books.forEach((book) => {
-
-      getTags(book.tag).forEach((tag) => {
-
-        const trimTag = tag.trim();
-
-        result[trimTag] =
-          (result[trimTag] || 0) + 1;
-      });
-    });
-
-    return Object.entries(result).map(
-      ([name, value]) => ({
-        name,
-        value
-      })
-    );
-  };
-
-  const getLikeCountByGenre = () => {
-
-    const result = {};
-
-    books.forEach((book) => {
-
-      result[book.genre] =
-        (result[book.genre] || 0) +
-        (Number(book.likes) || 0);
-    });
-
-    return Object.entries(result).map(
-      ([name, value]) => ({
-        name,
-        value
-      })
-    );
-  };
-
-  const getLikeCountByTag = () => {
-
-    const result = {};
-
-    books.forEach((book) => {
-
-      getTags(book.tag).forEach((tag) => {
-
-        const trimTag = tag.trim();
-
-        result[trimTag] =
-          (result[trimTag] || 0) +
-          (Number(book.likes) || 0);
-      });
-    });
-
-    return Object.entries(result).map(
-      ([name, value]) => ({
-        name,
-        value
-      })
-    );
-  };
-
-  const ChartCard = (
-    title,
-    data,
-    chartType,
-    setChartType,
-    unit,
-    selectedType,
-    setSelectedType
-  ) => {
-
-    const total = data.reduce(
-      (sum, item) => sum + item.value,
-      0
-    );
-
-    return (
-      <div className="chart-card">
-
-        <div className="chart-top">
-
-          <div>
-            <h3>{title}</h3>
-
-            <p>
-              총{' '}
-              <strong>
-                {total.toLocaleString()}
-              </strong>
-              {unit}
-            </p>
-          </div>
-
-          <div className="chart-buttons">
-
-            <button
-              type="button"
-              className={
-                selectedType === 'genre'
-                  ? 'active'
-                  : ''
-              }
-              onClick={() =>
-                setSelectedType('genre')
-              }
-            >
-              장르
-            </button>
-
-            <button
-              type="button"
-              className={
-                selectedType === 'tag'
-                  ? 'active'
-                  : ''
-              }
-              onClick={() =>
-                setSelectedType('tag')
-              }
-            >
-              태그
-            </button>
-
-          </div>
-        </div>
-
-        <div className="chart-content">
-
-          <div className="chart-box">
-
-            {chartType === 'pie' ? (
-
-              <div className="pie-bg">
-
-                <ResponsiveContainer
-                  width="100%"
-                  height={220}
-                >
-                  <PieChart>
-
-                    <Pie
-                      data={data}
-                      dataKey="value"
-                      nameKey="name"
-                      outerRadius={80}
-                    >
-
-                      {data.map((_, index) => (
-
-                        <Cell
-                          key={index}
-                          fill={
-                            colors[
-                              index %
-                              colors.length
-                            ]
-                          }
-                        />
-                      ))}
-                    </Pie>
-
-                    <Tooltip />
-
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-
-            ) : (
-
-              <ResponsiveContainer
-                width="100%"
-                height={220}
-              >
-                <BarChart data={data}>
-
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                  />
-
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-
-                  <Bar
-                    dataKey="value"
-                    fill="#1b3a5c"
-                    radius={[6, 6, 0, 0]}
-                  />
-
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-
-          <ul className="chart-list">
-
-            {[...data]
-              .sort((a, b) => b.value - a.value)
-              .map((item, index) => (
-
-                <li key={item.name}>
-
-                  <span>
-                    <b
-                      style={{
-                        color:
-                          colors[
-                            index %
-                            colors.length
-                          ]
-                      }}
-                    >
-                      •
-                    </b>
-
-                    {item.name}
-                  </span>
-
-                  <strong>
-                    {item.value.toLocaleString()}
-                    {unit}
-                  </strong>
-                </li>
-              ))}
-          </ul>
-        </div>
-      </div>
-    );
-  };
-
-  const bookCountData =
-    bookCountType === 'genre'
-      ? getBookCountByGenre()
-      : getBookCountByTag();
-
-  const likeCountData =
-    likeCountType === 'genre'
-      ? getLikeCountByGenre()
-      : getLikeCountByTag();
-
-  if (statsLoading) {
-    return (
-      <section className="stats-section">
-        <h2>도서 통계</h2>
-
-        <p
-          style={{
-            textAlign: 'center',
-            padding: '40px 0',
-            color: '#888'
-          }}
-        >
-          📊 통계 데이터를 불러오는 중...
-        </p>
-      </section>
-    );
-  }
-
-  if (statsError) {
-    return (
-      <section className="stats-section">
-        <h2>도서 통계</h2>
-
-        <p
-          style={{
-            textAlign: 'center',
-            padding: '40px 0',
-            color: '#c53030'
-          }}
-        >
-          ⚠️ {statsError}
-        </p>
-      </section>
-    );
-  }
-
-  if (books.length === 0) {
-    return (
-      <section className="stats-section">
-        <h2>도서 통계</h2>
-
-        <p
-          style={{
-            textAlign: 'center',
-            padding: '40px 0',
-            color: '#888'
-          }}
-        >
-          📭 통계를 표시할 도서가 없습니다.
-        </p>
-      </section>
-    );
-  }
-
-  return (
-    <section className="stats-section">
-
-      <h2>도서 통계</h2>
-
-      <div className="stats-chart-wrap">
-
-        {ChartCard(
-          '도서 수',
-          bookCountData,
-          bookChartType,
-          setBookChartType,
-          '권',
-          bookCountType,
-          setBookCountType
-        )}
-
-        {ChartCard(
-          '좋아요 수',
-          likeCountData,
-          likeChartType,
-          setLikeChartType,
-          '건',
-          likeCountType,
-          setLikeCountType
-        )}
-
-      </div>
-    </section>
   );
 }
 
