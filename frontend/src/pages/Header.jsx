@@ -25,8 +25,7 @@ function Header() {
           </button>
           <button className="icon-link-btn" onClick={() => navigate('/books/deleted')}>
             <img src="src/img/icon03.png" alt="휴지통" />
-          </button
-          >
+          </button>
         </div>
 
       </div>

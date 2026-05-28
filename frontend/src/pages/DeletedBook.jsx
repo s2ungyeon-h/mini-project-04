@@ -1,7 +1,3 @@
-/**
- * 도서 삭제 페이지
- * deletedAt 필드에 삭제 날짜가 있는 도서만 표시합니다.
- */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DeletedBookCard from '../components/DeletedBookCard';
@@ -21,19 +17,16 @@ async function fetchDeletedBooks() {
 }
 
 async function restoreDeletedBook(id) {
-  const res = await fetch(bookUrl + `/${id}`, {
+  const res = await fetch(`${bookUrl}/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      deletedAt: '',
-      updatedAt: new Date().toISOString(),
-    }),
+    body: JSON.stringify({ deletedAt: '', updatedAt: new Date().toISOString() }),
   });
   return parseResponse(res, '도서 복원에 실패했습니다.');
 }
 
 async function permanentDeleteBook(id) {
-  const res = await fetch(bookUrl + `/${id}`, { method: 'DELETE' });
+  const res = await fetch(`${bookUrl}/${id}`, { method: 'DELETE' });
   return parseResponse(res, '영구 삭제에 실패했습니다.');
 }
 
@@ -110,9 +103,7 @@ function DeletedBookPage() {
     <section className="app-content trash-page">
       <div className="trash-header">
         <h1 className="page-title">휴지통</h1>
-        <p className="page-desc">
-          삭제된 도서를 복원하거나 영구 삭제할 수 있습니다.
-        </p>
+        <p className="page-desc">삭제된 도서를 복원하거나 영구 삭제할 수 있습니다.</p>
       </div>
 
       {error && <p className="status-message status-message--error">{error}</p>}
@@ -122,9 +113,7 @@ function DeletedBookPage() {
         <div className="trash-empty">
           <span className="trash-empty-icon" aria-hidden>🗑️</span>
           <p className="empty-message">휴지통이 비어 있습니다.</p>
-          <p className="page-desc">
-            도서 상세·목록에서 삭제한 도서가 여기에 표시됩니다.
-          </p>
+          <p className="page-desc">도서 상세·목록에서 삭제한 도서가 여기에 표시됩니다.</p>
         </div>
       ) : (
         <>

@@ -1010,6 +1010,7 @@ button {
   display: flex;
   align-items: center;
   box-shadow: var(--shadow);
+  cursor: pointer;
   overflow: hidden;
 }
 
@@ -1363,6 +1364,7 @@ button {
   object-fit: cover;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
 .book-list-info {
@@ -1640,9 +1642,9 @@ button {
 }
 
 .cover-preview {
-  width: 200px;
-  min-width: 200px;
-  height: 300px;
+  width: 380px;
+  min-width: 380px;
+  height: 600px;
   background-color: #e8eaf6;
   border-radius: 8px;
   overflow: hidden;
@@ -1672,11 +1674,11 @@ button {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .form-group label {
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: bold;
   color: #555;
 }
@@ -1684,10 +1686,10 @@ button {
 .form-group input,
 .form-group textarea,
 .form-group select {
-  padding: 8px 12px;
+  padding: 6px 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   outline: none;
   transition: border 0.2s;
 }
@@ -1713,17 +1715,17 @@ button {
 }
 
 .ai-section h3 {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #7c4dff;
 }
 
 .generate-btn {
-  padding: 10px;
+  padding: 8px;
   background-color: #7c4dff;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -1739,12 +1741,12 @@ button {
 }
 
 .save-btn {
-  padding: 10px;
+  padding: 8px;
   background-color: #1e1e2e;
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -1946,6 +1948,7 @@ button {
 /* ============================================================
    Deleted Book Page
    ============================================================ */
+
 .trash-page {
   width: 94%;
   max-width: 1500px;
@@ -2431,3 +2434,117 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+/* ============================================================
+   Book Edit - 누락 클래스 (back-btn, tag-chip)
+   ============================================================ */
+.back-btn {
+  padding: 7px 14px;
+  background-color: #f0f4ff;
+  color: #3a5bd9;
+  border: 1px solid #c3d0f7;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.2s;
+}
+.back-btn:hover { background-color: #dde6ff; }
+.tag-chip-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.tag-chip { padding: 4px 12px; border-radius: 99px; cursor: pointer; font-size: 0.78rem; transition: all 0.15s ease; user-select: none; border: 1px solid #ccc; background: transparent; color: #555; }
+.tag-chip.selected { border-color: #1D9E75; background: #E1F5EE; color: #085041; font-weight: bold; }
+.tag-chip-container.tag-error { padding: 6px; border-radius: 6px; border: 1px solid #e53e3e; background-color: #fff5f5; }
+.tag-required { font-size: 0.72rem; color: #999; font-weight: normal; margin-left: 4px; }
+.tag-error-msg { margin: 4px 0 0 2px; font-size: 0.75rem; color: #e53e3e; }
+
+/* ============================================================
+   Book Detail Page (BookDetail.jsx)
+   ============================================================ */
+.bd-page { display: flex; justify-content: center; padding: 40px 20px; background-color: #f9f9f9; min-height: 100vh; }
+.bd-card { width: 100%; max-width: 780px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); padding: 32px; }
+.bd-btn-row { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 24px; }
+.bd-edit-btn { padding: 8px 16px; background-color: #1D9E75; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
+.bd-delete-btn { padding: 8px 16px; background-color: #e53e3e; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
+.bd-top { display: flex; gap: 28px; align-items: flex-start; margin-bottom: 32px; }
+.bd-cover-wrap { flex-shrink: 0; text-align: center; }
+.bd-cover-img { width: 210px; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: block; }
+.bd-info-col { flex: 1; display: flex; flex-direction: column; gap: 12px; padding-top: 4px; }
+.bd-title-row { display: flex; align-items: center; justify-content: space-between; }
+.bd-title { font-size: 24px; font-weight: bold; color: #111; margin: 0; }
+.bd-likes { font-size: 18px; color: #e53e3e; font-weight: bold; white-space: nowrap; flex-shrink: 0; }
+.bd-author { font-size: 15px; color: #555; margin: 0; }
+.bd-genre-badge { display: inline-block; align-self: flex-start; padding: 4px 12px; background-color: #E1F5EE; color: #085041; border-radius: 99px; font-size: 13px; font-weight: bold; border: 1px solid #1D9E75; }
+.bd-tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.bd-tag { padding: 3px 10px; background-color: #f0f4ff; color: #3a5bd9; border-radius: 99px; font-size: 12px; border: 1px solid #c3d0f7; }
+.bd-content-box { background-color: #f3effe; border: 1px solid #d8c8fa; border-radius: 10px; padding: 16px 18px; }
+.bd-content-label { font-size: 14px; font-weight: bold; color: #6b3fa0; margin: 0 0 8px 0; }
+.bd-content-text { font-size: 14px; line-height: 1.8; color: #4a3060; white-space: pre-wrap; margin: 0; }
+.bd-more-btn { margin-top: 8px; background: none; border: none; color: #6b3fa0; font-size: 13px; cursor: pointer; padding: 0; font-weight: bold; }
+.bd-date-wrap { display: flex; flex-direction: column; gap: 2px; margin-top: auto; }
+.bd-date { font-size: 12px; color: #aaa; margin: 0; }
+.bd-comments { border-top: 1px solid #eee; padding-top: 28px; }
+.bd-comments-title { font-size: 16px; font-weight: bold; color: #333; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px; }
+.bd-comments-count { display: inline-flex; align-items: center; justify-content: center; background-color: #1D9E75; color: #fff; border-radius: 99px; font-size: 12px; font-weight: bold; min-width: 22px; height: 22px; padding: 0 6px; }
+.bd-comment-list { list-style: none; padding: 0; margin: 0 0 20px 0; display: flex; flex-direction: column; gap: 10px; }
+.bd-comment-item { background-color: #f8f8f8; border-radius: 8px; padding: 12px 14px; border: 1px solid #eee; }
+.bd-comment-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.bd-comment-author { font-weight: bold; font-size: 13px; color: #333; }
+.bd-comment-date { font-size: 11px; color: #bbb; flex: 1; }
+.bd-comment-text { font-size: 14px; color: #444; margin: 0; line-height: 1.6; white-space: pre-wrap; }
+.bd-comment-empty { font-size: 14px; color: #aaa; text-align: center; padding: 20px 0; margin: 0 0 20px 0; }
+.bd-comment-action { background: none; border: none; color: #888; cursor: pointer; font-size: 12px; padding: 0 4px; }
+.bd-comment-action--delete { color: #e53e3e; }
+.bd-pw-box { margin-top: 8px; padding: 12px; background-color: #f9f9f9; border-radius: 6px; border: 1px solid #eee; }
+.bd-pw-msg { font-size: 13px; color: #666; margin: 0 0 8px 0; }
+.bd-pw-row { display: flex; gap: 6px; align-items: center; }
+.bd-pw-input { flex: 1; padding: 7px 10px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; box-sizing: border-box; font-family: inherit; }
+.bd-pw-confirm { padding: 7px 14px; background-color: #1D9E75; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; white-space: nowrap; }
+.bd-pw-cancel { padding: 7px 12px; background-color: #eee; color: #555; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+.bd-comment-form { display: flex; flex-direction: column; gap: 8px; }
+.bd-comment-input-row { display: flex; gap: 8px; align-items: flex-end; }
+.bd-comment-fields { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.bd-comment-meta { display: flex; gap: 8px; }
+.bd-comment-field { padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px; flex: 1; min-width: 120px; box-sizing: border-box; font-family: inherit; }
+.bd-comment-textarea { width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid #ddd; font-size: 14px; line-height: 1.6; resize: none; box-sizing: border-box; font-family: inherit; }
+.bd-comment-textarea--edit { margin-bottom: 8px; }
+.bd-comment-submit { padding: 0 20px; height: 60px; background-color: #1D9E75; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; flex-shrink: 0; }
+.bd-comment-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ============================================================
+   Book Register Page (BookRegister.jsx)
+   ============================================================ */
+.book-register { padding: 30px; max-width: 550px; margin: 40px auto; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid #eee; }
+.book-register__title { text-align: center; margin-bottom: 30px; color: #222; font-size: 24px; font-weight: bold; }
+.book-register__group { margin-bottom: 22px; }
+.book-register__label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; font-size: 14px; }
+.book-register__required { color: #e53e3e; margin-left: 2px; }
+.book-register__input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; font-size: 14px; font-family: inherit; }
+.book-register__input--error { border-color: #e53e3e; background-color: #fff5f5; }
+.book-register__select { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; font-size: 14px; background-color: #fff; font-family: inherit; }
+.book-register__textarea { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; font-size: 14px; resize: none; font-family: inherit; }
+.book-register__chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.book-register__chips--error { padding: 8px; border-radius: 6px; border: 1px solid #e53e3e; background-color: #fff5f5; }
+.book-register__chip { padding: 6px 14px; border-radius: 99px; cursor: pointer; font-size: 13px; transition: all 0.15s ease; user-select: none; border: 1px solid #ccc; background: transparent; color: #555; }
+.book-register__chip--active { border-color: #1D9E75; background: #E1F5EE; color: #085041; font-weight: bold; }
+.book-register__error-msg { margin: 5px 0 0 2px; font-size: 12px; color: #e53e3e; }
+.book-register__submit { width: 100%; padding: 14px; background-color: #222; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 25px; font-family: inherit; }
+.book-register__ai-section { margin-top: 10px; padding: 20px; background-color: #f8f9fa; border-radius: 10px; border: 1px dashed #1D9E75; }
+.book-register__ai-title { font-size: 16px; font-weight: bold; color: #1D9E75; margin-bottom: 15px; margin-top: 0; }
+.book-register__ai-btn { width: 100%; padding: 12px; color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; background-color: #1D9E75; font-family: inherit; transition: background-color 0.2s; }
+.book-register__ai-btn:disabled { background-color: #94d3be; cursor: not-allowed; }
+.book-register__preview { margin-bottom: 25px; text-align: center; background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
+.book-register__preview-label { font-size: 13px; font-weight: bold; color: #555; margin-bottom: 10px; margin-top: 0; }
+.book-register__preview-img { max-width: 180px; height: auto; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+/* ============================================================
+   공통 상태 메시지
+   ============================================================ */
+.loading-text { text-align: center; margin-top: 60px; color: #888; font-size: 16px; }
+.book-list-empty { text-align: center; padding: 60px 0; width: 100%; color: #888; }
+.book-list-empty__icon { font-size: 40px; margin-bottom: 12px; }
+.book-list-empty__msg { font-size: 16px; }
+.book-list-status { text-align: center; margin-top: 60px; }
+.book-list-status--error { padding: 24px; background-color: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; color: #c53030; }
+.book-list-status__title { font-size: 18px; margin-bottom: 8px; }
+.book-list-status__msg { font-size: 14px; color: #742a2a; }
+.chart-status { text-align: center; padding: 40px 0; color: #888; }
+.chart-status--error { color: #c53030; }

@@ -72,7 +72,6 @@ function BookMain() {
 
   return (
     <>
-      {/* 검색창 + 메뉴 */}
       <div className='book-main-section'>
         <BookSearch
           searchQuery={searchQuery}
@@ -92,7 +91,6 @@ function BookMain() {
         <BookMenu />
       </div>
 
-      {/* 상세검색 결과 — book-main-section 밖 */}
       {(selectedGenres.length > 0 || selectedTags.length > 0) && (
         <section className="detail-result-section">
           <div className="detail-result-header">
@@ -128,7 +126,6 @@ function BookMain() {
                   ))}
               </div>
 
-              {/* 페이지네이션 */}
               {Math.ceil(filteredBooks.length / DETAIL_PAGE_SIZE) > 1 && (
                 <div className="detail-pagination">
                   {Array.from({ length: Math.ceil(filteredBooks.length / DETAIL_PAGE_SIZE) }, (_, i) => i + 1).map((page) => (
@@ -152,10 +149,7 @@ function BookMain() {
   );
 }
 
-/* ============================================================
-   왼쪽 검색
-   ============================================================ */
-
+// 검색창 + 상세검색 패널
 function BookSearch({
   searchQuery, setSearchQuery,
   searchPage, setSearchPage,
@@ -243,7 +237,6 @@ function BookSearch({
         </button>
       </div>
 
-      {/* 상세검색 패널 — search-area 바로 아래 */}
       {isDetailOpen && (
         <div className="detail-search-panel">
           <div className="detail-section">
@@ -282,10 +275,7 @@ function BookSearch({
   );
 }
 
-/* ============================================================
-   왼쪽 메뉴
-   ============================================================ */
-
+// 메인 메뉴 그리드 (등록/검색/목록/통계/휴지통)
 function BookMenu() {
   const navigate = useNavigate();
 
@@ -317,10 +307,7 @@ function BookMenu() {
   );
 }
 
-/* ============================================================
-   인기 도서
-   ============================================================ */
-
+// 인기 도서 캐러셀 (좋아요 순 상위 10권, 3초 자동 슬라이드)
 function BookSection() {
   const navigate = useNavigate();
   const visibleCount = 5;
@@ -357,7 +344,7 @@ function BookSection() {
   const trackRef = useRef(null);
   const moveNextRef = useRef(null);
 
-  // 앞 visibleCount개를 뒤에 복제 → 끝에서 처음으로 자연스럽게 이어짐
+  // 앞 visibleCount개를 뒤에 복제해 끝에서 처음으로 자연스럽게 루프
   const extendedBooks = [...popularBooks, ...popularBooks.slice(0, visibleCount)];
 
   const disableTransition = () => {
@@ -381,7 +368,6 @@ function BookSection() {
     }
   };
 
-  // 복제 구간에 도달하면 transition 끝난 후 조용히 처음으로 점프
   const handleTransitionEnd = () => {
     if (popularIndex >= popularBooks.length) {
       disableTransition();
@@ -428,7 +414,6 @@ function BookSection() {
                   <div
                     className="likes-book-thumbnail"
                     onClick={() => navigate(`/books/${book.id}`)}
-                    style={{ cursor: 'pointer' }}
                   >
                     <img
                       src={book.coverImageUrl || noCover}

@@ -7,10 +7,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
-
         <div className="footer-top">
-
-          {/* 로고 영역 */}
           <div className="footer-brand">
             <img
               src={logo}
@@ -22,7 +19,6 @@ function Footer() {
             <p className="footer-tagline">체계적인 도서 관리 시스템</p>
           </div>
 
-          {/* 프로젝트 개요 */}
           <div className="footer-project">
             <h4 className="footer-section-title">미니프로젝트 4차</h4>
             <ul className="footer-project-list">
@@ -42,14 +38,11 @@ function Footer() {
               </li>
             </ul>
           </div>
-
         </div>
 
-        {/* 하단 저작권 */}
         <div className="footer-bottom">
           <p>© 2026 도서관리 시스템 — 미니프로젝트 4차. All rights reserved.</p>
         </div>
-
       </div>
     </footer>
   );

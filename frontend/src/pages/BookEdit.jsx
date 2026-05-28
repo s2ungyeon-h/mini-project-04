@@ -1,10 +1,8 @@
-import { generateBookCover } from '../components/api/Openapi'
-import { generateOneLiner } from '../components/api/Openapi_text'
+import { generateBookCover } from '../components/api/Openapi';
+import { generateOneLiner } from '../components/api/Openapi_text';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { GENRE_LIST, TAG_LIST } from "../bookOption";
-import './BookEdit.css';
-
 
 const JSON_SERVER_URL = 'http://localhost:3000';
 
@@ -14,24 +12,19 @@ function BookEdit() {
 
   const [book, setBook] = useState(null);
   const [bookLoading, setBookLoading] = useState(true);
-
-  // 도서 수정 필드 상태
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [content, setContent] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
   const [tagError, setTagError] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+  const [quality, setQuality] = useState('low');
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [coverPreview, setCoverPreview] = useState('');
+  const [summary, setSummary] = useState('');
+  const [oneLinerLoading, setOneLinerLoading] = useState(false);
 
-  // AI 표지 생성 관련 상태
-  const [apiKey, setApiKey] = useState('')
-  const [quality, setQuality] = useState('low')
-  const [loading, setLoading] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [coverPreview, setCoverPreview] = useState('')
-  const [summary, setSummary] = useState('')
-  const [oneLinerLoading, setOneLinerLoading] = useState(false)
-
-  // 도서 데이터 fetch
   useEffect(() => {
     const fetchBook = async () => {
       try {
@@ -64,7 +57,6 @@ function BookEdit() {
     });
   };
 
-  // 저장
   async function handleSave() {
     if (selectedTags.length === 0) {
       setTagError(true);
@@ -115,7 +107,6 @@ function BookEdit() {
     }
   }
 
-  // AI 표지 생성 버튼
   async function handleGenerateCover() {
     if (!apiKey.trim()) {
       alert('OpenAI API Key를 입력해주세요.');
@@ -160,7 +151,6 @@ function BookEdit() {
           )}
         </div>
 
-        {/* 오른쪽: 수정 폼 + AI 생성 */}
         <div className="edit-form">
 
           <div className="form-group">
@@ -235,7 +225,7 @@ function BookEdit() {
               {oneLinerLoading ? '⏳ 생성 중...' : '✏️ 한줄평 생성'}
             </button>
             {summary && (
-              <div className="form-group" style={{ marginTop: '8px' }}>
+              <div className="form-group">
                 <label>한줄평</label>
                 <textarea
                   value={summary}
@@ -246,7 +236,6 @@ function BookEdit() {
             )}
           </div>
 
-          {/* AI 표지 생성 섹션 */}
           <div className="ai-section">
             <h3>🎨 AI 표지 생성</h3>
 

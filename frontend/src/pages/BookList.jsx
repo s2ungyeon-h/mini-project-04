@@ -22,7 +22,6 @@ function Sidebar({ books, selectedGenre, selectedTag, onGenreChange, onTagChange
 
   return (
     <aside className="book-list-sidebar">
-      {/* 장르 필터 */}
       <div className="sidebar-section">
         <h3 className="sidebar-title">장르</h3>
         <ul className="sidebar-list">
@@ -47,7 +46,6 @@ function Sidebar({ books, selectedGenre, selectedTag, onGenreChange, onTagChange
         </ul>
       </div>
 
-      {/* 태그 필터 */}
       <div className="sidebar-section">
         <h3 className="sidebar-title">태그</h3>
         <div className="sidebar-tags">
@@ -71,11 +69,10 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
 
   // 표시할 페이지 번호 범위 계산 (최대 5개)
   const getPageNumbers = () => {
-    const pages = [];
     let start = Math.max(1, currentPage - 2);
-    let end = Math.min(totalPages, start + 4);
+    const end = Math.min(totalPages, start + 4);
     if (end - start < 4) start = Math.max(1, end - 4);
-
+    const pages = [];
     for (let i = start; i <= end; i++) pages.push(i);
     return pages;
   };
@@ -204,7 +201,6 @@ function BookList() {
     return filteredBooks.slice(start, start + BOOKS_PER_PAGE);
   }, [filteredBooks, currentPage]);
 
-  // 필터 변경 시 1페이지로 리셋
   const handleSearchChange = (e) => { setSearchTerm(e.target.value); setCurrentPage(1); };
   const handleGenreChange = (g) => { setSelectedGenre(g); setCurrentPage(1); };
   const handleTagChange = (t) => { setSelectedTag(t); setCurrentPage(1); };
@@ -213,9 +209,7 @@ function BookList() {
     return (
       <div className="book-list-container">
         <h1 className="book-list-title">도서 목록 페이지</h1>
-        <p style={{ textAlign: 'center', marginTop: '60px', color: '#888', fontSize: '16px' }}>
-          📚 도서 목록을 불러오는 중...
-        </p>
+        <p className="loading-text">📚 도서 목록을 불러오는 중...</p>
       </div>
     );
   }
@@ -224,13 +218,9 @@ function BookList() {
     return (
       <div className="book-list-container">
         <h1 className="book-list-title">도서 목록 페이지</h1>
-        <div style={{
-          textAlign: 'center', marginTop: '60px', padding: '24px',
-          backgroundColor: '#fff5f5', border: '1px solid #feb2b2',
-          borderRadius: '8px', color: '#c53030',
-        }}>
-          <p style={{ fontSize: '18px', marginBottom: '8px' }}>⚠️ 오류가 발생했습니다</p>
-          <p style={{ fontSize: '14px', color: '#742a2a' }}>{error}</p>
+        <div className="book-list-status book-list-status--error">
+          <p className="book-list-status__title">⚠️ 오류가 발생했습니다</p>
+          <p className="book-list-status__msg">{error}</p>
         </div>
       </div>
     );
@@ -264,7 +254,6 @@ function BookList() {
           />
         </div>
 
-        {/* 활성 필터 / 결과 건수 */}
         {(searchTerm || selectedGenre || selectedTag) && (
           <p className="book-list-result-info">
             {selectedGenre && <span className="book-list-filter-badge">{selectedGenre}</span>}
@@ -282,7 +271,6 @@ function BookList() {
                 alt={`${book.title} 표지`}
                 className="book-list-cover"
                 onClick={() => navigate(`/books/${book.id}`)}
-                style={{ cursor: 'pointer' }}
               />
               <div className="book-list-info">
                 <h3 className="book-list-name">{book.title}</h3>
@@ -299,9 +287,9 @@ function BookList() {
             </div>
           ))}
           {filteredBooks.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '60px 0', width: '100%', color: '#888' }}>
-              <p style={{ fontSize: '40px', marginBottom: '12px' }}>🔍</p>
-              <p style={{ fontSize: '16px' }}>
+            <div className="book-list-empty">
+              <p className="book-list-empty__icon">🔍</p>
+              <p className="book-list-empty__msg">
                 {searchTerm || selectedGenre || selectedTag
                   ? '조건에 맞는 도서가 없습니다.'
                   : '등록된 도서가 없습니다.'}

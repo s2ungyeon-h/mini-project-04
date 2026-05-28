@@ -62,7 +62,6 @@ function BookFinder() {
   const [error, setError] = useState(null);
   const bookUrl = 'http://localhost:3000/books';
 
-  // db.json 직접 import 대신 서버에서 fetch
   useEffect(() => {
     let cancelled = false;
 
