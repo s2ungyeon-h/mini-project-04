@@ -92,6 +92,12 @@
 
 ---
 
+## 🏗 시스템 아키텍처
+
+<img width="900" height="659" alt="architecture" src="https://github.com/user-attachments/assets/5b2356cb-d9b1-47b6-a69e-09c3bb45070a" />
+
+---
+
 ## 🚀 핵심 기능 구현
 
 ### AI 표지 자동 생성
@@ -120,16 +126,16 @@
 
 ## 💡 배운 점
 
-- fetch의 GET/POST/PATCH/DELETE 패턴을 실전에서 직접 구현하며 **REST API 통신 구조**를 체득
-- OpenAI API 연동 과정에서 **비동기 처리(async/await)** 와 **Base64 → Data URL 변환** 흐름 이해
-- 백엔드 없이 json-server로 API 환경을 구성하며 **프론트-백 분리 구조**의 필요성 체감
+- 원격의 최신 코드를 `[로컬 main] → [내 브랜치]` 순으로 먼저 가져와서 충돌을 미리 해결한 뒤 PR을 보내야 함을 체득
+- 실제 백엔드 없이 GET / POST / PATCH / DELETE 요청 흐름을 직접 구현하면서 **REST API의 기본 구조**를 체득
+- JSON Server 기반이라 고품질 AI 이미지의 Base64 데이터 저장에 한계가 있었고, 실제 백엔드와 S3 같은 스토리지를 활용했다면 더 안정적으로 이미지 기능을 구현할 수 있었을 것
 
 ---
 
 ## 🔮 향후 개선 방향
 
 - json-server → **Spring Boot** 로 교체해 실제 백엔드 연동 (Backend 미니프로젝트 연계)
-- 표지 **재생성 및 미리보기** 기능 추가
+- 댓글 비밀번호가 db.json에 평문으로 저장되는 문제 → 백엔드 연동 시 서버 측 암호화 처리 적용
 - 사용자 인증 기능 도입으로 개인화 서비스 확장
 
 ---
